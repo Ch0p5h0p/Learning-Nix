@@ -1,36 +1,60 @@
 {
-  description = "A custom GCC compiler built via Nix";
-
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-  };
-
   outputs = { self, nixpkgs }:
-    let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-    in
-    rec {
-      packages.${system} = rec {
-        deps = import ./pkgs/dependencies.nix {
-          stdenv = pkgs.stdenv;
-          fetchurl = pkgs.fetchurl;
-        };
+  let
 
-        default = import ./pkgs/gcc.nix {
-          stdenv = pkgs.stdenv;
-          fetchurl = pkgs.fetchurl;
-          gnumake = pkgs.gnumake;
-          perl = pkgs.perl;
-          m4 = pkgs.m4;
-          gmp = deps.gmp;
-          mpfr = deps.mpfr;
-          mpc = deps.mpc;
-        };
-      };
+    system = "x86_64-linux";
 
-      devShells.${system}.default = pkgs.mkShell {
-        buildInputs = [ self.packages.${system}.default ];
-      };
+    pkgs = import nixpkgs {
+      inherit system;
+    };
+
+    zlib = import ./pkgs/zlib.nix {
+      inherit (pkgs) stdenv fetchurl;
+    };
+
+    libffi = import ./pkgs/libffi.nix {
+      inherit (pkgs) stdenv fetchurl;
+    };
+
+    sqlite = import ./pkgs/sqlite.nix {
+      inherit (pkgs) stdenv fetchurl;
+    };
+
+    openssl = import ./pkgs/openssl.nix {
+      inherit (pkgs) stdenv fetchurl;
+    };
+
+    python3 = import ./pkgs/python3.nix {
+      inherit (pkgs) stdenv fetchurl;
+      inherit zlib libffi sqlite openssl;
+    };
+
+    ninja = import ./pkgs/ninja.nix {
+      inherit (pkgs) stdenv fetchFromGitHub;
+      inherit python3;
+    };
+
+    cmake = import ./pkgs/cmake.nix {
+      inherit (pkgs) stdenv fetchFromGitHub openssl;
+      inherit ninja python3;
+    };
+
+    llvm = import ./pkgs/llvm.nix {
+      inherit (pkgs) stdenv fetchFromGitHub;
+      inherit zlib cmake ninja python3;
+    };
+
+    clang = import ./pkgs/clang.nix {
+      inherit (pkgs) stdenv;
+      inherit llvm;
+    };
+
+    in {
+      packages.x86_64-linux.default = clang;
+
+      devShells.${system}.default =
+        pkgs.mkShell {
+          packages = [ clang ];
+        };
     };
 }
