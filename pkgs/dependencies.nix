@@ -6,7 +6,7 @@ rec {
     version = "6.3.0";
     src = fetchurl {
       url = "mirror://gnu/gmp/gmp-6.3.0.tar.xz";
-      hash = "";
+      hash = "sha256-o8K4AgG4nmhhb0rTC8Zq7kknw85Q4zkpyoGdXENTiJg=";
     };
   };
 

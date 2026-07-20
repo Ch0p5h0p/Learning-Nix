@@ -6,7 +6,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "mirror://gnu/gcc/gcc-13.2.0/gcc-13.2.0.tar.xz";
-    hash = "";
+    hash = "sha256-4nXnZEKmBnNBon8Exca4PYYTFEAEwEE1KIY9xrXHQ9o=";
   };
 
   buildInputs = [ gmp mpfr mpc ];
