@@ -11,7 +11,7 @@ stdenv.mkDerivation {
     hash = "sha256-86Z8e4ubnHJc1cYHjYPLeQC9eoPF417HYtqg8NAzxts=";
   };
 
-  sourceRoot = "source/llvm";
+  sourceRoot = "source";
 
   nativeBuildInputs = [
     cmake
@@ -28,4 +28,20 @@ stdenv.mkDerivation {
     "-DLLVM_TARGETS_TO_BUILD=X86"
     "-DCMAKE_BUILD_TYPE=Release"
   ];
+
+  configurePhase = ''
+    cmake -B build -S llvm \
+      -G Ninja \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=$out \
+      -DLLVM_ENABLE_PROJECTS="clang"
+  '';
+
+  buildPhase = ''
+    ninja -j4 -C build
+  '';
+
+  installPhase = ''
+    ninja -C build install
+  '';
 }

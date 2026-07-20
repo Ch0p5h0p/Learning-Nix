@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, ninja, python3, openssl }:
+{ stdenv, fetchFromGitHub, python3, openssl }:
 
 stdenv.mkDerivation {
   pname = "cmake-custom";
@@ -11,29 +11,25 @@ stdenv.mkDerivation {
     hash = "sha256-p9R2SPKQem9Np24EalY6t24xE469SJNu7t1yxDvCbuc=";
   };
 
-  nativeBuildInputs = [
-    ninja
-    python3
-  ];
-
   buildInputs = [
+    python3
     openssl
   ];
 
   configurePhase = ''
+    export OPENSSL_ROOT_DIR=${openssl}
+
     ./bootstrap \
     --prefix=$out \
-    --parallel=$NIX_BUILD_CORES \
-    -- \
-    -DOPENSSL_ROOT_DIR=${openssl}
+    --parallel=$NIX_BUILD_CORES
   '';
 
   buildPhase = ''
-    ninja
+    make
   '';
 
   installPhase = ''
-    ninja install
+    make install
   '';
 
 }

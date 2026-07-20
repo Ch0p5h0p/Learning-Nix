@@ -1,4 +1,4 @@
-{ stdenv, fetchurl }:
+{ stdenv, fetchurl, perl }:
 
 stdenv.mkDerivation {
   pname = "openssl-custom";
@@ -6,8 +6,16 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "https://github.com/openssl/openssl/releases/download/openssl-3.5.0/openssl-3.5.0.tar.gz";
-    hash = "";
+    hash = "sha256-NE0KefGpsIApsHROLMQBpD+ckKzRBE0JpTC0iFqOn8A=";
   };
+
+  nativeBuildInputs = [
+    perl
+  ];
+
+  patchPhase = ''
+    patchShebangs .
+  '';
 
   configurePhase = ''
     ./Configure \

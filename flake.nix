@@ -1,7 +1,6 @@
 {
   outputs = { self, nixpkgs }:
   let
-
     system = "x86_64-linux";
 
     pkgs = import nixpkgs {
@@ -21,7 +20,7 @@
     };
 
     openssl = import ./pkgs/openssl.nix {
-      inherit (pkgs) stdenv fetchurl;
+      inherit (pkgs) stdenv fetchurl perl;
     };
 
     python3 = import ./pkgs/python3.nix {
@@ -35,26 +34,25 @@
     };
 
     cmake = import ./pkgs/cmake.nix {
-      inherit (pkgs) stdenv fetchFromGitHub openssl;
-      inherit ninja python3;
+      inherit (pkgs) stdenv fetchFromGitHub;
+      inherit python3 openssl;
     };
 
     llvm = import ./pkgs/llvm.nix {
       inherit (pkgs) stdenv fetchFromGitHub;
-      inherit zlib cmake ninja python3;
-    };
-
-    clang = import ./pkgs/clang.nix {
-      inherit (pkgs) stdenv;
-      inherit llvm;
+     inherit zlib cmake ninja python3;
     };
 
     in {
-      packages.x86_64-linux.default = clang;
+      packages.${system} = {
+        default = llvm;
+        clang = llvm;
+        llvm = llvm;
+      };
 
       devShells.${system}.default =
         pkgs.mkShell {
-          packages = [ clang ];
+          packages = [ llvm ];
         };
     };
 }

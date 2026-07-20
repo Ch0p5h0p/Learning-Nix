@@ -16,5 +16,5 @@ As of now, everything is entirely built in custom derivations, except for stdenv
 - [x] Python 3
 - [x] Ninja
 - [x] CMake
-- [ ] LLVM
-- [ ] Clang
+- [x] LLVM
+- [x] Clang

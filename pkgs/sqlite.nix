@@ -6,7 +6,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "https://www.sqlite.org/2025/sqlite-autoconf-3500000.tar.gz";
-    hash = "";
+    hash = "sha256-O8d2pfJDiXQV87gPt02zI2UB1FGUx1x/aQEuTsASgyc=";
   };
 
   configurePhase = ''
