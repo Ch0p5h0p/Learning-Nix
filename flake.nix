@@ -48,11 +48,15 @@
         default = llvm;
         clang = llvm;
         llvm = llvm;
+        python = python3;
       };
 
       devShells.${system}.default =
         pkgs.mkShell {
-          packages = [ llvm ];
+          packages = [ llvm python3 ];
         };
+        shellHook = ''
+          alias python=python3
+        '';
     };
 }
